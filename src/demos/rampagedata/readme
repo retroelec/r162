@@ -1,0 +1,9 @@
+convert +dither -remap $CONVPIC4MCR162DIR/r162dcolors.ppm george_mr0.png george_mr0.ppm
+convert +dither -remap $CONVPIC4MCR162DIR/r162dcolors.ppm george_mr1.png george_mr1.ppm
+convert +dither -remap $CONVPIC4MCR162DIR/r162dcolors.ppm george_mr2.png george_mr2.ppm
+convert +dither -remap $CONVPIC4MCR162DIR/r162dcolors.ppm george_mr3.png george_mr3.ppm
+$CONVPIC4MCR162DIR/kippm2r162gr george_mr0.ppm > hh
+$CONVPIC4MCR162DIR/kippm2r162gr george_mr1.ppm >> hh
+$CONVPIC4MCR162DIR/kippm2r162gr george_mr2.ppm >> hh
+$CONVPIC4MCR162DIR/kippm2r162gr george_mr3.ppm >> hh
+

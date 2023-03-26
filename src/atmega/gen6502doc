@@ -1,0 +1,5 @@
+#!/bin/sh
+echo "<procs>" > 6502doc.xml
+grep ";[ ]*<" output.asm util.asm keyboard.asm videogen.asm fat.asm sdcard.asm msprite.asm graphics.asm spi.asm | cut -f2 | cut -b 2- >> 6502doc.xml
+echo "</procs>" >> 6502doc.xml
+java -cp /usr/share/java/xalan2.jar org.apache.xalan.xslt.Process -XSL gen6502doc.xsl -IN 6502doc.xml -PARAM lang e -OUT 6502doc.md

@@ -1,0 +1,1 @@
+edit "file-to-edit": Simple full screen editor to edit a new or an existing file. Press ctrl-h to get a help page. Known bugs: Copy/paste does not work, search is not always working properly.

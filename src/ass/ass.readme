@@ -1,0 +1,1 @@
+ass "ass-input-file" ["bin-output-file"]: 6502 assembler - you must provide the source code file (6502 assembler code) and optionally the name of the output file (6502 binary). If the second argument does not exist, the name of the binary is derived from the source code file name by dropping the file name extension (which is in this case mandatory).

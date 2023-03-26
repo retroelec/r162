@@ -1,0 +1,160 @@
+rm 6502def.inc
+
+# Variabeln
+sed -n -e '/6502DEFM/ {p;n;p}' globals.asm > tmp1
+ptrflag=
+cat tmp1 | while read line; do
+  boolcomment=`echo $line | grep 6502DEFM | awk '{ print $1 }'`
+  if [ -z $boolcomment ]; then
+    lab=`echo $line | awk '{ print $2 }'`
+    if [ ! -z $ptrflag ]; then
+      lab=${lab}P768
+    fi
+    str=`echo $line | awk '{ print $4 }' | awk -F"+" '{ print $1 }'`
+    val=`grep -E ^$str[[:blank:]] main.map | awk '{ print $4 }'`
+    if [ ! -z $val ]; then
+      val2=`echo $line | awk '{ print $4 }' | awk -F"+" '{ print $2 }'`
+      newval=`echo "if ($val+$val2-768 < 0) $val+$val2-768+65536 else $val+$val2-768" | bc`
+    else
+      newval=`echo $str-768 | bc`
+    fi
+    echo $lab = $newval >> 6502def.inc
+  else
+    ptrflag=`echo $line | grep 6502DEFMP | awk '{ print $1 }'`
+    echo $line >> 6502def.inc
+  fi
+done
+
+# Konstanten
+sed -n -e '/6502DEFC/ {p;n;p}' globals.asm > tmp1
+cat tmp1 | while read line; do
+  boolcomment=`echo $line | grep 6502DEFC | awk '{ print $1 }'`
+  if [ -z $boolcomment ]; then
+    lab=`echo $line | awk '{ print $2 }'`
+    val=`echo $line | awk '{ print $4 }'`
+    #str=`echo $line | awk '{ print $4 }' | awk -F"+" '{ print $1 }'`
+    #val=`grep -E ^$str[[:blank:]] main.map | awk '{ print $4 }'`
+    echo $lab = $val >> 6502def.inc
+  else
+    echo $line >> 6502def.inc
+  fi
+done
+
+/bin/rm tmp1
+
+echo "REGINT6502 = 64774" >> 6502def.inc
+echo "SNDTCCR1A = 64847" >> 6502def.inc
+echo "SNDTCCR1B = 64846" >> 6502def.inc
+echo "SNDOCR1AH = 64843" >> 6502def.inc
+echo "SNDOCR1AL = 64842" >> 6502def.inc
+echo "SNDTCCR2 = 64839" >> 6502def.inc
+echo "SNDOCR2 = 64834" >> 6502def.inc
+
+echo "#define dbgit .byt \$07" >> 6502def.inc
+echo "#define jmpsh .byt \$0f" >> 6502def.inc
+echo "#define callatm .byt \$ff," >> 6502def.inc
+
+tmp=0
+echo "#define setcursorpos6502 $tmp" >> 6502def.inc
+tmp=$((tmp+2))
+echo "#define cursorleft6502 $tmp" >> 6502def.inc
+tmp=$((tmp+2))
+echo "#define cursorright6502 $tmp" >> 6502def.inc
+tmp=$((tmp+2))
+echo "#define cursorup6502 $tmp" >> 6502def.inc
+tmp=$((tmp+2))
+echo "#define cursordown6502 $tmp" >> 6502def.inc
+tmp=$((tmp+2))
+echo "#define scrollup6502 $tmp" >> 6502def.inc
+tmp=$((tmp+2))
+echo "#define println6502 $tmp" >> 6502def.inc
+tmp=$((tmp+2))
+echo "#define printchar6502 $tmp" >> 6502def.inc
+tmp=$((tmp+2))
+echo "#define printcharnoctrl6502 $tmp" >> 6502def.inc
+tmp=$((tmp+2))
+echo "#define printstring6502 $tmp" >> 6502def.inc
+tmp=$((tmp+2))
+echo "#define mul8x86502 $tmp" >> 6502def.inc
+tmp=$((tmp+2))
+echo "#define mul16x16mod6502 $tmp" >> 6502def.inc
+tmp=$((tmp+2))
+echo "#define div16x166502 $tmp" >> 6502def.inc
+tmp=$((tmp+2))
+echo "#define atoi6502 $tmp" >> 6502def.inc
+tmp=$((tmp+2))
+echo "#define itoa6502 $tmp" >> 6502def.inc
+tmp=$((tmp+2))
+echo "#define itoaformat6502 $tmp" >> 6502def.inc
+tmp=$((tmp+2))
+echo "#define memfill6502 $tmp" >> 6502def.inc
+tmp=$((tmp+2))
+echo "#define memcopy6502 $tmp" >> 6502def.inc
+tmp=$((tmp+2))
+echo "#define memcopyr6502 $tmp" >> 6502def.inc
+tmp=$((tmp+2))
+echo "#define memcopylowhi6502 $tmp" >> 6502def.inc
+tmp=$((tmp+2))
+echo "#define memcopyhilow6502 $tmp" >> 6502def.inc
+tmp=$((tmp+2))
+echo "#define keybinit6502 $tmp" >> 6502def.inc
+tmp=$((tmp+2))
+echo "#define getchwait6502 $tmp" >> 6502def.inc
+tmp=$((tmp+2))
+echo "#define getchnowait6502 $tmp" >> 6502def.inc
+tmp=$((tmp+2))
+echo "#define sdinit6502 $tmp" >> 6502def.inc
+tmp=$((tmp+2))
+echo "#define sdreadsector6502 $tmp" >> 6502def.inc
+tmp=$((tmp+2))
+echo "#define sdwritesector6502 $tmp" >> 6502def.inc
+tmp=$((tmp+2))
+echo "#define fatload6502 $tmp" >> 6502def.inc
+tmp=$((tmp+2))
+echo "#define fatsave6502 $tmp" >> 6502def.inc
+tmp=$((tmp+2))
+echo "#define fatopen6502 $tmp" >> 6502def.inc
+tmp=$((tmp+2))
+echo "#define fatreadnextsector6502 $tmp" >> 6502def.inc
+tmp=$((tmp+2))
+echo "#define fatwritenextsector6502 $tmp" >> 6502def.inc
+tmp=$((tmp+2))
+echo "#define fatrmorextcc6502 $tmp" >> 6502def.inc
+tmp=$((tmp+2))
+echo "#define copycharmap6502 $tmp" >> 6502def.inc
+tmp=$((tmp+2))
+echo "#define addmsprite6502 $tmp" >> 6502def.inc
+tmp=$((tmp+2))
+echo "#define delmsprite6502 $tmp" >> 6502def.inc
+tmp=$((tmp+2))
+echo "#define initlistmsprites6502 $tmp" >> 6502def.inc
+tmp=$((tmp+2))
+echo "#define coincmsprite6502 $tmp" >> 6502def.inc
+tmp=$((tmp+2))
+echo "#define gfxcopytile6502 $tmp" >> 6502def.inc
+tmp=$((tmp+2))
+echo "#define gfxcopytilecol6502 $tmp" >> 6502def.inc
+tmp=$((tmp+2))
+echo "#define gfxcopytilerow6502 $tmp" >> 6502def.inc
+tmp=$((tmp+2))
+echo "#define setpixel6502 $tmp" >> 6502def.inc
+tmp=$((tmp+2))
+echo "#define drawline6502 $tmp" >> 6502def.inc
+tmp=$((tmp+2))
+echo "#define copyblock6502 $tmp" >> 6502def.inc
+tmp=$((tmp+2))
+echo "#define copychars6502 $tmp" >> 6502def.inc
+tmp=$((tmp+2))
+echo "#define vic20multicolmapping6502 $tmp" >> 6502def.inc
+tmp=$((tmp+2))
+echo "#define spi6502 $tmp" >> 6502def.inc
+tmp=$((tmp+2))
+echo "#define spienable6502 $tmp" >> 6502def.inc
+tmp=$((tmp+2))
+echo "#define spidisable6502 $tmp" >> 6502def.inc
+tmp=$((tmp+2))
+echo "#define fatls6502 $tmp" >> 6502def.inc
+tmp=$((tmp+2))
+echo "#define fatcd6502 $tmp" >> 6502def.inc
+
+cat 6502def.inc | sed -e 's/#define/.define/' > 6502defcc.inc 

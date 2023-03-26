@@ -1,0 +1,48 @@
+Bauteil Wert      Device          Package  Description                                    
+C1      100n      C5/3            C5B3     CAPACITOR                                      
+C2      10u,25V   CPOL-EUB45181B  B45181B  POLARIZED CAPACITOR, European symbol           
+C3      100n      C5/3            C5B3     CAPACITOR                                      
+C4      100n      C5/3            C5B3     CAPACITOR                                      
+C5      100n      C5/3            C5B3     CAPACITOR                                      
+C11     100u,25V  CPOL-EUB45181B  B45181B  POLARIZED CAPACITOR, European symbol           
+C12     100n      C5/3            C5B3     CAPACITOR                                      
+C13     100n      C5/3            C5B3     CAPACITOR                                      
+C15     100n      C5/3            C5B3     CAPACITOR                                      
+C16     100n      C5/3            C5B3     CAPACITOR                                      
+C17     100n      C5/3            C5B3     CAPACITOR                                      
+IC1     MEGA161P  MEGA161P        DIL40    MICROCONTROLLER                                
+IC3     74HC573N  74HC573N        DIL20    8-bit D latch BUS DRIVER                       
+IC4     74HC165N  74HC165N        DIL16    8-bit parallel load SHIFT REGISTER             
+IC5     7805T     7805T           TO220H   Positive VOLTAGE REGULATOR                     
+IC6     LP2950Z   LP2950Z         TO92     100 mA, Low Power Low Dropout Voltage Regulator
+IC7     74HC573N  74HC573N        DIL20    8-bit D latch BUS DRIVER                       
+IC8     LY621024  TC551001CP      DIL32    MEMORY                                         
+IC9     74HC257N  74HC257N        DIL16    Quadruple 2-to 1 line data SELECTOR/MULTIPLEXER
+JP1     SCART     PINHD-1X13_2.00 1X13M    PIN HEADER                                     
+JP6     5V        PINHD-1X04_2.00 1X04M    PIN HEADER                                     
+QG1     SG-531    SG531           DIL08-4  CRYSTAL RESONATOR                              
+R1      10k       R-EU_0207/12    0207/12  RESISTOR, European symbol                      
+R2      261       R-EU_0207/12    0207/12  RESISTOR, European symbol                      
+R3      261       R-EU_0207/12    0207/12  RESISTOR, European symbol                      
+R4      392       R-EU_0207/12    0207/12  RESISTOR, European symbol                      
+R5      787       R-EU_0207/12    0207/12  RESISTOR, European symbol                      
+R6      100       R-EU_0207/12    0207/12  RESISTOR, European symbol                      
+R7      100       R-EU_0207/12    0207/12  RESISTOR, European symbol                      
+R8      100       R-EU_0207/12    0207/12  RESISTOR, European symbol                      
+R9      680       R-EU_0207/12    0207/12  RESISTOR, European symbol                      
+R10     75        R-EU_0207/12    0207/12  RESISTOR, European symbol                      
+R11     47k       R-EU_0207/12    0207/12  RESISTOR, European symbol                      
+R12     1k8       R-EU_0207/12    0207/12  RESISTOR, European symbol                      
+R13     1k8       R-EU_0207/12    0207/12  RESISTOR, European symbol                      
+R14     1k8       R-EU_0207/12    0207/12  RESISTOR, European symbol                      
+R15     3k3       R-EU_0207/12    0207/12  RESISTOR, European symbol                      
+R16     3k3       R-EU_0207/12    0207/12  RESISTOR, European symbol                      
+R17     3k3       R-EU_0207/12    0207/12  RESISTOR, European symbol                      
+R18     47k       R-EU_0207/12    0207/12  RESISTOR, European symbol                      
+R19     220       R-EU_0207/12    0207/12  RESISTOR, European symbol                      
+S2      On-Off    M251            M251     SLIDING SWITCH                                 
+SV1     Reset+LED MA04-1          MA04-1   PIN HEADER                                     
+SV2     SD Card   MA07-1          MA07-1   PIN HEADER                                     
+SV3     ISP       MA03-2          MA03-2   PIN HEADER                                     
+X2      Power     737992-55       737992-5 FEMALE PRINT CONNECTOR                         
+X4      Keyboard  MD06SS          MDIN06SS YAMAICHI CONNECTOR                             

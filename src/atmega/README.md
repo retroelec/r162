@@ -1,0 +1,295 @@
+# ATMega system software
+
+## Source files
+
+- main.asm: initialization of the r162 system, main file which includes all other *.asm files
+- videogen.asm: video generation
+- shell.asm: shell
+- cpu6502.asm: 6502 emulation
+- fat.asm: FAT file system functions
+- msprite.asm: sprite system functions
+- graphics.asm: tile copy functions
+- output.asm: text output functions
+- keyboard.asm: keyboard input functions
+- util.asm: utility functions
+- sdcard.asm: functions for sd card access
+- spi.asm: spi  functions
+- list.asm: functions to manage lists
+- globals.asm: global variables
+- 6502def.inc: include file, defines for 6502 assembler programs
+
+## Memory Map
+
+| ATMega Address | Description |
+| -------------- | ----------- |
+| 0-255 	| ATMega registers (256 bytes) |
+| 256-759 	| internal variables + stack of the ATMega (504 bytes) |
+| 760-767 	| interrupt vectors for the 6502 (0xFFF8-0xFFFF) (8 bytes) |
+| 768-1023 	| zeropage of the 6502 (256 bytes) |
+| 1024-1279 	| stack of the 6502 (256 bytes) |
+| 1280-2279 	| textmap (default - changeable) (1000 bytes) |
+| 2280-3279 	| colormap in text mode (default - changeable) (1000 bytes) |
+| 3280-62975 	| free memory area (e.g. for 6502 code) (59696 bytes) |
+| 46976-51071 	| buffer for the function fatls (4096 byte) |
+| 46976-62975 	| multicolormap (default - changeable) (16000 bytes) |
+| 62976-65023 	| charmap (default - high byte changeable) (2048 bytes) |
+| 65024-65535 	| FAT buffer (512 bytes) |
+
+## R162 ATMega service routines
+### Service routines
+- **setcursorpos6502**: set cursor position
+  - input parameter
+    - register x: x position
+    - register y: y position
+- **cursorleft6502**: move cursor to the left
+- **cursorright6502**: move cursor to the right
+- **cursorup6502**: move cursor up
+- **cursordown6502**: move cursor down
+- **scrollup6502**: scroll one line up in text mode
+- **println6502**: set cursor to the beginning of the next line
+- **printchar6502**: output character at the actual cursor position
+  - input parameter
+    - register a: character
+- **printcharnoctrl6502**: output character (but no "control character") at the actual cursor position
+  - input parameter
+    - register a: character
+- **printstring6502**: output string at the actual cursor position
+  - input parameter
+    - register x: low byte of the pointer to the string
+    - register y: high byte of the pointer to the string
+- **mul8x86502**: multiplication of two unsigned 8 bit values
+  - input parameter
+    - register x: value 1
+    - register y: value 2
+  - output parameter
+    - memory address RMUL6502: result (16 bit value)
+- **mul16x16mod6502**: multiplication of two 16 bit values modulo 2^16
+  - input parameter
+    - memory address RMUL6502: value 1 (16 bit value)
+    - memory address RMUL6502+2: value 2 (16 bit value)
+  - output parameter
+    - memory address RMUL6502: result (16 bit value)
+- **div16x166502**: division of a 16 bit value (dividend) by a  16 bit value (divisor)
+  - input parameter
+    - memory address RMUL6502: dividend (16 bit value)
+    - memory address RMUL6502+2: divisor (16 bit value)
+  - output parameter
+    - memory address RMUL6502: quotient of division (16 bit value)
+    - memory address RMUL6502+2: remainder of division (16 bit value)
+- **atoi6502**: convert a string to an integer
+  - input parameter
+    - register x: low byte of the pointer to the string
+    - register y: high byte of the pointer to the string
+  - output parameter
+    - memory address RATOI6502: integer (16 bit value)
+- **itoa6502**: convert an integer to a string
+  - input parameter
+    - register x: low byte of the integer (16 bit value)
+    - register y: high byte of the integer (16 bit value)
+  - output parameter
+    - memory address ITOASTRING: pointer to the string
+- **itoaformat6502**: convert an integer to a string (formatted with leading zeros)
+  - input parameter
+    - register x: low byte of the integer (16 bit value)
+    - register y: high byte of the integer (16 bit value)
+  - output parameter
+    - memory address ITOASTRING: pointer to the string
+- **memfill6502**: fill a n*m bytes memory block with a constant value (low- or high-mem)
+  - input parameter
+    - register x: low byte of the pointer to the <a href="#memfill6502structure">memfill6502 structure</a>
+    - register y: high byte of the pointer to the <a href="#memfill6502structure">memfill6502 structure</a>
+- **memcopy6502**: copy a memory block (low- or high-mem)
+  - input parameter
+    - register x: low byte of the pointer to the <a href="#memcopy6502structure">memcopy6502 structure</a>
+    - register y: high byte of the pointer to the <a href="#memcopy6502structure">memcopy6502 structure</a>
+- **memcopyr6502**: copy a memory block (highest address will be copied first) (low- or high-mem)
+  - input parameter
+    - register x: low byte of the pointer to the <a href="#memcopy6502structure">memcopy6502 structure</a>
+    - register y: high byte of the pointer to the <a href="#memcopy6502structure">memcopy6502 structure</a>
+- **memcopylowhi6502**: copy a memory block from low memory to high memory
+  - input parameter
+    - register x: low byte of the pointer to the <a href="#memcopy6502structure">memcopy6502 structure</a>
+    - register y: high byte of the pointer to the <a href="#memcopy6502structure">memcopy6502 structure</a>
+- **memcopyhilow6502**: copy a memory block from high memory to low memory
+  - input parameter
+    - register x: low byte of the pointer to the <a href="#memcopy6502structure">memcopy6502 structure</a>
+    - register y: high byte of the pointer to the <a href="#memcopy6502structure">memcopy6502 structure</a>
+- **keybinit6502**: initialize keyboard interface
+- **getchwait6502**: read the next character from keyboard (waits until a key is pressed)
+  - output parameter
+    - memory address RGETCH6502: character
+- **getchnowait6502**: read a character from keyboard if a key is pressed
+  - output parameter
+    - memory address RGETCH6502: character
+- **copycharmap6502**: copy character definitions from FLASH to SRAM
+- **fatrmorextcc6502**: "support function": allocate a new cluster for a file or remove cluster chain (registers (a,x,y) are *not* preserved!)
+  - input parameter
+    - register x: low byte of the pointer to the <a href="#fatloadsavestructure">fatloadsave structure</a>
+    - register y: high byte of the pointer to the <a href="#fatloadsavestructure">fatloadsave structure</a>
+    - memory address FATEMPTYCLUST6502: determined empty cluster (number)
+    - memory address FATRMFLAG6502: flag to signal if the cluster chain should be removed or extended
+  - output parameter
+    - memory address RERRCODE6502: allocate a new cluster: 0 = OK, FATINFOLASTCLUST = info. -> start cluster must be set outside of fatrmorextcc6502 (nothing done)<br>remove cluster chain: greater or equal 248 = OK, FATINFOLASTCLUST = file already "empty"
+- **fatls6502**: list the actual directory
+  - output parameter
+    - memory address FATLSBUF: start of fatls buffer
+    - memory address RERRCODE6502: error code (0 = OK)
+- **fatcd6502**: change directory
+  - input parameter
+    - register x: low byte of the pointer to the directory name
+    - register y: high byte of the pointer to the directory name
+  - output parameter
+    - memory address RERRCODE6502: error code (0 = OK)
+- **fatopen6502**: open a file
+  - input parameter
+    - register x: low byte of the pointer to the <a href="#fatloadsavestructure">fatloadsave structure</a>
+    - register y: high byte of the pointer to the <a href="#fatloadsavestructure">fatloadsave structure</a>
+  - output parameter
+    - memory address RERRCODE6502: error code (0 = OK)
+- **fatreadnextsector6502**: read the next sector of the file (low- or high-mem)
+  - input parameter
+    - register x: low byte of the pointer to the <a href="#fatloadsavestructure">fatloadsave structure</a>
+    - register y: high byte of the pointer to the <a href="#fatloadsavestructure">fatloadsave structure</a>
+    - register a: "safe" mode (= 0) or "vsync" mode (!= 0)
+  - output parameter
+    - memory address RERRCODE6502: error resp. info code (0 = OK, 8 = FATINFOLASTCLUST)
+- **fatwritenextsector6502**: write the next sector of the file (low- or high-mem)
+  - input parameter
+    - register x: low byte of the pointer to the <a href="#fatloadsavestructure">fatloadsave structure</a>
+    - register y: high byte of the pointer to the <a href="#fatloadsavestructure">fatloadsave structure</a>
+  - output parameter
+    - memory address RERRCODE6502: error resp. info code (0 = OK)
+- **fatload6502**: load a file to memory (low- or high-mem)
+  - input parameter
+    - register x: low byte of the pointer to the <a href="#fatloadsavestructure">fatloadsave structure</a>
+    - register y: high byte of the pointer to the <a href="#fatloadsavestructure">fatloadsave structure</a>
+  - output parameter
+    - memory address RERRCODE6502: error code (0 = OK)
+- **fatsave6502**: save memory block to file (low- or high-mem)
+  - input parameter
+    - register x: low byte of the pointer to the <a href="#fatloadsavestructure">fatloadsave structure</a>
+    - register y: high byte of the pointer to the <a href="#fatloadsavestructure">fatloadsave structure</a>
+  - output parameter
+    - memory address RERRCODE6502: error code (0 = OK)
+- **sdinit6502**: initialization of SD card
+  - output parameter
+    - memory address RERRCODE6502: error code (0 = OK)
+- **sdreadsector6502**: read a sector from SD card
+  - input parameter
+    - register x: low byte of the pointer to the <a href="#sdreadwritesectorstructure">sdreadwritesector structure</a>
+    - register y: high byte of the pointer to the <a href="#sdreadwritesectorstructure">sdreadwritesector structure</a>
+  - output parameter
+    - memory address RERRCODE6502: error code (0 = OK)
+- **sdwritesector6502**: write a sector to SD card
+  - input parameter
+    - register x: low byte of the pointer to the <a href="#sdreadwritesectorstructure">sdreadwritesector structure</a>
+    - register y: high byte of the pointer to the <a href="#sdreadwritesectorstructure">sdreadwritesector structure</a>
+  - output parameter
+    - memory address RERRCODE6502: error code (0 = OK)
+- **addmsprite6502**: add a sprite to the sprite list
+  - input parameter
+    - register x: low byte of the pointer to the <a href="#mspritestructure">msprite structure</a>
+    - register y: high byte of the pointer to the <a href="#mspritestructure">msprite structure</a>
+- **delmsprite6502**: remove a sprite from the sprite list
+  - input parameter
+    - register x: low byte of the pointer to the <a href="#mspritestructure">msprite structure</a>
+    - register y: high byte of the pointer to the <a href="#mspritestructure">msprite structure</a>
+- **initlistmsprites6502**: initialize the sprite list
+- **coincmsprite6502**: detect collisions of a certain sprite with all other sprites
+  - input parameter
+    - register x: low byte of the pointer to the <a href="#mspritestructure">msprite structure</a>
+    - register y: high byte of the pointer to the <a href="#mspritestructure">msprite structure</a>
+- **gfxcopytile6502**: copy a tile to the multi colormap (low- or high-mem)
+  - input parameter
+    - register a: tile number
+    - register x: x position (0..39)
+    - register y: y position (0..24)
+- **gfxcopytilecol6502**: copy a tile column to the multi colormap (low- or high-mem)
+- **gfxcopytilerow6502**: copy a tile row to the multi colormap (low- or high-mem)
+- **setpixel6502**: set a pixel in the multi colormap (low- or high-mem)
+  - input parameter
+    - register a: color (0-15)
+    - register x: x position
+    - register y: y position
+- **drawline6502**: draw a line to the multi colormap (low- or high-mem)
+  - input parameter
+    - register a: color (0-15)
+    - register x: x start position
+    - register y: y start position
+    - memory address DRAWLINEENDX: x end position
+    - memory address DRAWLINEENDY: y end position
+- **copyblock6502**: copy a data block
+  - input parameter
+    - register x: low byte of the pointer to the <a href="#copyblock6502structure">copyblock6502 structure</a>
+    - register y: high byte of the pointer to the <a href="#copyblock6502structure">copyblock6502 structure</a>
+- **copychars6502**: copy char data (C64 style to R162 style)
+  - input parameter
+    - register x: low byte of the pointer to the <a href="#copychars6502structure">copychars6502 structure</a>
+    - register y: high byte of the pointer to the <a href="#copychars6502structure">copychars6502 structure</a>
+- **vic20multicolmapping6502**: copy VIC20 multi color map to R162 multi color map
+  - input parameter
+    - register x: low byte of the pointer to the <a href="#vic20multicolmapping6502structure">vic20multicolmapping6502 structure</a>
+    - register y: high byte of the pointer to the <a href="#vic20multicolmapping6502structure">vic20multicolmapping6502 structure</a>
+- **spi6502**: write/read a byte to/from SPI interface (CS: PD1)
+  - input parameter
+    - register a: byte to write
+  - output parameter
+    - register a: byte read
+- **spienable6502**: enable SPI interface (CS: PD1)
+- **spidisable6502**: disable SPI interface (CS: PD1)
+### Structures
+- **memfill6502structure**<div id="memfill6502structure"></div>
+  - memptr: pointer to the memory region (offset=0, size=2)
+  - n: number of bytes (offset=2, size=1)
+  - m: number of elements (offset=3, size=1)
+  - const: constant value (offset=4, size=1)
+- **memcopy6502structure**<div id="memcopy6502structure"></div>
+  - src: pointer to the source memory region (offset=0, size=2)
+  - dest: pointer to the destination memory region (offset=2, size=2)
+  - n: number of bytes (offset=4, size=2)
+- **fatloadsavestructure**<div id="fatloadsavestructure"></div>
+  - file: pointer to the file structure (12 bytes) (offset=0, size=2)
+  - name: pointer to the file name (offset=2, size=2)
+  - mem: pointer to the memory region (offset=4, size=2)
+- **sdreadwritesectorstructure**<div id="sdreadwritesectorstructure"></div>
+  - nr: sector number (offset=0, size=3)
+  - mem: pointer to the memory region (512 bytes) (offset=3, size=2)
+- **mspritestructure**<div id="mspritestructure"></div>
+  - nodenext: next pointer (internal) (offset=0, size=2)
+  - nodeprev: prev pointer (internal) (offset=2, size=2)
+  - id: sprite id (offset=4, size=1)
+  - x: x position of sprite (offset=5, size=1)
+  - y: y position of sprite (offset=6, size=1)
+  - w: width of sprite (offset=7, size=1)
+  - h: height of sprite (offset=8, size=1)
+  - spritedata: pointer to sprite data (offset=9, size=2)
+  - spritebgdata: pointer to a memory region to save the background (offset=11, size=2)
+  - startposold: pointer to the (old) position of the sprite inside the multi color map (internal) (offset=13, size=2)
+  - wbytesold: (old) width of sprite in bytes (internal) (offset=15, size=1)
+  - hold: (old) height of sprite (internal) (offset=16, size=1)
+  - status: state of sprite (TOADD, TODRAW, TODEL) (offset=17, size=1)
+  - transparency: transparent color of sprite (offset=18, size=1)
+  - coincredleft: number of pixels to reduce the detection area in horizontal direction (left) (offset=19, size=1)
+  - coincredright: number of pixels to reduce the detection area in horizontal direction (right) (offset=20, size=1)
+  - coincredup: number of pixels to reduce the detection area in vertical direction (above) (offset=21, size=1)
+  - coincreddown: number of pixels to reduce the detection area in vertical direction (bottom) (offset=22, size=1)
+  - nocoincdetect: flag if collisions with this sprite should be detected (offset=23, size=1)
+  - numcoinc: number of sprites this sprite collided with (offset=24, size=1)
+  - coincarr: array of sprite IDs this sprite collided with (offset=25, size=depends on the number of sprites with nocoincdetect == false)
+- **copyblock6502structure**<div id="copyblock6502structure"></div>
+  - src: pointer to the source memory block (offset=0, size=2)
+  - dest: pointer to the destination memory block (offset=2, size=2)
+  - wsrc: width of source memory block (offset=4, size=1)
+  - hsrc: height of source memory block (offset=5, size=1)
+  - modwsrc: source memory block: number of bytes to skip to read the next line (offset=6, size=1)
+  - modwdest: destination memory block: number of bytes to skip to write the next line (offset=7, size=1)
+- **copychars6502structure**<div id="copychars6502structure"></div>
+  - src: pointer to the source memory block (offset=0, size=2)
+  - deststartchar: start char in destination memory block (offset=2, size=1)
+  - numchars: number of chars to copy (offset=3, size=1)
+- **vic20multicolmapping6502structure**<div id="vic20multicolmapping6502structure"></div>
+  - screenptr: pointer to VIC20 screen memory (offset=0, size=2)
+  - charpage: high byte of VIC20 char data (page aligned) (offset=2, size=1)
+  - coltabpage: high byte of color table (page aligned) (offset=3, size=1)
+  - numofrows: number of rows to process (offset=4, size=1)
+  - destmap: pointer to R162 multicolor memory (offset=5, size=2)

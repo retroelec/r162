@@ -1,0 +1,22 @@
+#ifndef _R162DEFS_H
+#define _R162DEFS_H
+
+#define COLOR_BLACK 0
+#define COLOR_RED 1
+#define COLOR_GREEN 8
+#define COLOR_YELLOW 13
+#define COLOR_BLUE 6
+#define COLOR_MAGENTA 3
+#define COLOR_CYAN 14
+#define COLOR_WHITE 15
+
+#define COLOR_DARKBLUE 2
+#define COLOR_DARKGREEN 4
+#define COLOR_ORANGE 5
+#define COLOR_VIOLET 7
+#define COLOR_OCHER 9
+#define COLOR_LIGHTBLUE 10
+#define COLOR_LIGHTVIOLET 11
+#define COLOR_LIGHTGREEN 12
+
+#endif /* _R162DEFS_H */

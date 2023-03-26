@@ -1,0 +1,31 @@
+createenemytablel1:
+	.word	createsnail-1
+	.word	createbee-1
+	.word	createstone-1
+	.word	createbanana-1
+	.word	createapple-1
+	.word	createtomato-1
+	.word	createcarrot-1
+	.word	createspring-1
+	.word	createsignstart-1
+	.word	createsign2-1
+	.word	createsign3-1
+	.word	createsign4-1
+	.word	createsigngoal-1
+	.word	creategrassplatform-1
+	.word	createrollingstone-1
+	.word	createfire-1
+
+#include "../levelcommon/snail.asm"
+#include "../levelcommon/bee.asm"
+#include "../levelcommon/stone.asm"
+#include "../levelcommon/banana.asm"
+#include "../levelcommon/apple.asm"
+#include "../levelcommon/tomato.asm"
+#include "../levelcommon/carrot.asm"
+#include "../levelcommon/spring.asm"
+#define PLATFORM_UP_DOWN
+#include "../levelcommon/platform.asm"
+#include "../levelcommon/grassplatform.asm"
+#include "../levelcommon/rollingstone.asm"
+#include "../levelcommon/fire.asm"

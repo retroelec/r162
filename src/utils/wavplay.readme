@@ -1,0 +1,1 @@
+wavplay "wavfile": wav player to play PCM sound data in the famous RIFF WAVE format. PCM sound data must meet the following requirements: sample size: 8 bit, max. sample rate: 15600 Hz, 1channel

@@ -1,0 +1,1 @@
+creat "filename" "size": Creates a new empty file named "filename" of size "size".

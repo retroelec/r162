@@ -1,0 +1,28 @@
+Hintergrund
+-----------
+
+- In Mame Screenshots erstellen (F12)
+- Screenshots via Gimp oeffnen und Tile-Bereiche ausschneiden und als png-Bild speichern (in Gimp ctrl-c + Erstellen eines neuen Bildes aus dem Clipboard; Anzahl Pixel der Hoehe und Breite des Bereichs muessen durch 8 teilbar sein)
+- Erstellte png-Bilder in ein Verzeichnis kopieren (z.B. tiles2)
+- Ins Tile-Verzeichnis wechseln und dort das Kommando "genleveldata.sh *.png" ausfuehren (alternativ explizite Angabe der *.png-Dateien -> Reihenfolge)
+- Datei leveldata.asm in das Level-Verezichnis (z.B. level2) verschieben (+ evt. umbennen, z.B. wboydatal2.asm) und einchecken
+- Im Tile-Verzeichnis die Dateien leveldefs.tmx, level.tmx, ts_world.png und die zuvor erstelleten png-Bilder einchecken
+- Mittels tiled kann nun der Level designed werden (im Tile-Verzeichnis ausfuehren): tiled leveldefs.tmx level.tmx &
+
+
+
+Tilesets fuer tiled erstellen
+-----------------------------
+
+siehe Skript tiles2/gentseventsl2.sh
+
+
+
+Sprites
+-------
+
+- Anzahl Pixel in x-Richtung muss gerade sein
+- pic2sprite.sh
+- kiconedit, um den Hintergrund einzufaerben
+- kippm2r162gr ${base}sprite.ppm, um die Assembler-Daten zu erhalten
+

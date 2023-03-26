@@ -1,0 +1,45 @@
+C64-Zeichen fÃ¼r den R162 aufbereiten
+------------------------------------
+
+
+1. C64-Roms auslesen
+
+od -v -w8 -t u1 charset1.rom | cut -b 8- > charset1.txt
+od -v -w8 -t u1 charset2.rom | cut -b 8- > charset2.txt
+
+Anschliessend aus den Dateien charset1.txt und charset2.txt die Datei charset.txt erzeugen (von Hand).
+
+
+2. Tabelle transponieren mittels OpenOffice Calc
+
+Einlesen der Daten:
+"Einfügen - Tabelle aus Datei"
+
+Transponieren:
+- Zellen markieren und mit Ctrl-C in die Zwischenablage kopieren
+- Neues  Tabellenblatt anlegen
+- "Bearbeiten | Inhalte einfügen" -> Checkbox "Transponieren" anwählen
+
+Speichern der transponierten Tabelle:
+Speichern als csv-Datei (charset.csv), Felder mit Leerzeichen getrennt
+
+
+3. Daten aufbereiten
+
+Daten mittels dem folgenden Skript aufbereiten:
+#!/bin/bash
+echo ".ORG  CHARDEFS"
+i=0
+line=".db "
+for byte in `cat charset.csv`
+do
+  i=`expr $i + 1`
+  if [ $i -eq 8 ]
+  then
+    echo $line$byte
+    i=0
+    line=".db "
+  else
+    line=$line$byte","
+  fi
+done
