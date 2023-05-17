@@ -1,6 +1,6 @@
 # ATMega based home computer
 
-in the following an ATMega162 based home computer system built at the beginning of 2010 is described. The system is connected to a TV using SCART, a standard PS/2 keyboard works as an input device and SD card access allows to transfer programs and data to / from SRAM (128 kB).
+In the following an ATMega162 based home computer system built at the beginning of 2010 is described. The system is connected to a TV using SCART, a standard PS/2 keyboard works as an input device and SD card access allows to transfer programs and data to / from SRAM (128 kB).
 
 An ATMega microcontroller is a Harvard architecture machine. So to be able to load and run arbitrary code without reprogramming the flash memory the code has to be interpreted. Therefore the ATMega emulates a 6502 processor (→ von Neumann architecture).
 
@@ -65,6 +65,10 @@ Backside: Power cable, SCART connector, power on/off, PS/2 connector, ISP connec
 Frontside: SD card slot, reset button, power LED
 
 ![PCB and case frontside](images/SAM_0591_640x360.png "PCB and case frontside")
+
+Michał Przybył (<mickpr@poczta.onet.pl>) made a SMD version of the home computer.
+
+![PCB made by Mike](images/board_by_mike.png "PCB made by Mike")
 
 ## System software
 
@@ -383,11 +387,13 @@ The following debug commands are available:
 Hint: I didn't put source code on github which were developed by other people. However you can find the corresponding binaries
 in the bin directory.
 
-### Eagle files
+### Schema and board data files
 
 EAGLE (see http://www.autodesk.com/products/eagle/overview) schema and board data files are saved in the directory hw.
 Files I used in conjunction with the DVD-116U-DIKOM case: r162dl.sch and r162dl.brd (used to create the PCB). 
 Files that may be more appropriate if the SCART connector should be on the board itself: r162_scart.sch and r162_scart.brd (*UNTESTED*).
+
+You can find the Altium Designer project files made by Michał Przybył (<mickpr@poczta.onet.pl>) in the file hw/Retroelec.7z.
 
 ### Source code
 
